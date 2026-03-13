@@ -1,8 +1,14 @@
-#include "ListSerializer.hpp"
+#include "CListSerializer.hpp"
 #include <fstream>
 #include <iostream>
 
-void ListSerializer::clear() noexcept
+struct ListSerializer
+{
+  std::string data;
+  int num;
+};
+
+void CListSerializer::clear() noexcept
 {
   {
     ListNode *current = head;
@@ -16,7 +22,7 @@ void ListSerializer::clear() noexcept
   }
 }
 
-size_t ListSerializer::utf8_length(const std::string &s)
+size_t CListSerializer::utf8_length(const std::string &s)
 {
   size_t len = 0;
 
@@ -28,16 +34,16 @@ size_t ListSerializer::utf8_length(const std::string &s)
   return len;
 }
 
-ListSerializer::ListSerializer() : head(nullptr)
+CListSerializer::CListSerializer() : head(nullptr)
 {
 }
 
-ListSerializer::~ListSerializer()
+CListSerializer::~CListSerializer()
 {
   clear();
 }
 
-bool ListSerializer::deserializeFromText(const std::string &TextFileName)
+bool CListSerializer::deserializeFromText(const std::string &TextFileName)
 {
   if (TextFileName.size() == 0)
   {
@@ -56,14 +62,13 @@ bool ListSerializer::deserializeFromText(const std::string &TextFileName)
   int rand;
   // Указатель на новый элемент списка
   ListNode *var;
-  // Счетчик узлов
-  int counter_list = 0;
 
   INPUT.open(TextFileName);
 
   if (!INPUT.is_open())
   {
-    throw std::runtime_error("Не удалось открыть файл: " + TextFileName);
+    std::cerr << "Не удалось открыть файл: " + TextFileName;
+    return false;
   }
 
   while (std::getline(INPUT, data_plus_rand))
@@ -73,17 +78,16 @@ bool ListSerializer::deserializeFromText(const std::string &TextFileName)
       continue;
     }
 
-    counter_list++;
-
     pos = data_plus_rand.find(';');
 
     if (pos != std::string::npos)
     {
       data = data_plus_rand.substr(0, pos);
 
-      if (utf8_length(data)>1000)
+      if (utf8_length(data) > 1000)
       {
-        throw std::runtime_error("Длина data >1000 элементов");
+        std::cerr << "Длина data > 1000 элементов";
+        return false;
       }
 
       int rand = std::stoi(data_plus_rand.substr(pos + 1));
@@ -109,17 +113,18 @@ bool ListSerializer::deserializeFromText(const std::string &TextFileName)
       {
         if (rand >= 0)
         {
-          counter_ptr[i]->rand = counter_ptr[rand];
+          counter_ptr[i].first->rand = counter_ptr[rand].first;
         }
         else
         {
-          counter_ptr[i]->rand = nullptr;
+          counter_ptr[i].first->rand = nullptr;
         }
       }
     }
     else
     {
-      throw std::runtime_error("неверная строка");
+      std::cerr << "неверная строка";
+      return false;
     }
   }
 
@@ -128,11 +133,11 @@ bool ListSerializer::deserializeFromText(const std::string &TextFileName)
     throw std::runtime_error("Ошибка чтения файла" + TextFileName);
   }
 
-  if (counter_list>1e6)
+  if (counter_ptr.size() > 1e6)
   {
     throw std::runtime_error("Cлишком большое количество узлов");
   }
-  
+
   INPUT.close();
 
   for (size_t i = 0; i < vec_pair.size(); i++)
@@ -143,7 +148,7 @@ bool ListSerializer::deserializeFromText(const std::string &TextFileName)
     }
     else
     {
-      std::cerr << "неверный индекс" << std::endl;
+      std::cerr << "Неверный индекс" << std::endl;
       return false;
     }
   }
@@ -151,4 +156,23 @@ bool ListSerializer::deserializeFromText(const std::string &TextFileName)
   return true;
 }
 
+bool CListSerializer::serializeToBinary(const std::string &binaryFileName)
+{
+  if (binaryFileName.size() == 0)
+  {
+    return false;
+  }
 
+  // Файл для записи данных
+  std::ofstream OUTPUT;
+
+  OUTPUT.open(binaryFileName, std::ios::binary);
+
+  if (!OUTPUT.is_open())
+  {
+    std::cerr << "Не удалось открыть файл: " + binaryFileName;
+    return false;
+  }
+
+  return true;
+}

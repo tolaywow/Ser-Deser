@@ -1,6 +1,6 @@
 // #include "CSerialization.hpp"
 // #include "CDeserialization.hpp"
-#include "ListSerializer.hpp"
+#include "CListSerializer.hpp"
 #include "iostream"
 
 int main(int argc, char *argv[])
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
   ListNode LN;
 
-  ListSerializer LS;
+  CListSerializer LS;
   try
   {
     LS.deserializeFromText(IN);

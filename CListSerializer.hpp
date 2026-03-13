@@ -3,7 +3,7 @@
 #include <vector>
 #include <utility>
 
-class ListSerializer
+class CListSerializer
 {
 private:
   bool readData();
@@ -24,12 +24,12 @@ private:
   std::vector<std::pair<ListNode *, int>> counter_ptr;
 
 public:
-  ListSerializer();
-  ~ListSerializer();
+  CListSerializer();
+  ~CListSerializer();
 
   // Запрещено копирование
-  ListSerializer(const ListSerializer &) = delete;
-  ListSerializer &operator=(const ListSerializer &) = delete;
+  CListSerializer(const CListSerializer &) = delete;
+  CListSerializer &operator=(const CListSerializer &) = delete;
 
   /**
    * @brief Десериализация из текстового файла
