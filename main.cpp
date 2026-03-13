@@ -1,32 +1,48 @@
+// #include "CSerialization.hpp"
+// #include "CDeserialization.hpp"
+#include "ListSerializer.hpp"
+#include "iostream"
 
 int main(int argc, char *argv[])
 {
-  char *InputName = nullptr;
-  char *OutputName = nullptr;
+  std::string IN;
+  std::string ON;
+
   if (argc > 1)
   {
-    InputName = argv[1];
+    IN = argv[1];
 
     if (argc > 2)
     {
-      OutputName = argv[2];
+      ON = argv[2];
     }
     else
     {
-      char ON[] = "outlet.out";
-      OutputName = ON;
+      ON = "outlet.out";
     }
   }
   else if (argc == 1)
   {
-    char IN[] = "inlet.in";
-    InputName = IN;
-    char ON[] = "outlet.out";
-    OutputName = ON;
+    IN = "inlet.in";
+    ON = "outlet.out";
   }
   else
   {
-    throw "Wrong Parametrs";
+    return -1; //"Wrong Parametrs";
+  }
+
+  ListNode LN;
+
+  ListSerializer LS;
+  try
+  {
+    LS.deserializeFromText(IN);
+    LS.serializeToBinary(ON);
+    LS.deserializeFromBinary(ON);
+  }
+  catch (const std::exception &e)
+  {
+    std::cerr << e.what() << '\n';
   }
 
   return 0;
