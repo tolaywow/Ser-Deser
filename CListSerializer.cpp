@@ -59,7 +59,7 @@ bool CListSerializer::deserializeFromText(const std::string &TextFileName)
   // Строка с данными
   std::string data;
   // Номер случайного элемента
-  size_t rand;
+  int rand;
   // Указатель на новый элемент списка
   ListNode *var;
 
@@ -107,7 +107,7 @@ bool CListSerializer::deserializeFromText(const std::string &TextFileName)
         counter_ptr[i - 1].first->next = counter_ptr[i].first;
       }
 
-      if (rand > counter_ptr.size())
+      if (rand > (int)counter_ptr.size())
       {
         vec_pair.emplace_back(counter_ptr[i].first, rand);
       }
@@ -221,7 +221,7 @@ bool CListSerializer::deserializeFromBinary(const std::string &binaryFileName)
   // Размер пакета данных
   size_t sizeofdata;
   // Номер случайного элемента(индекс)
-  size_t rand;
+  int rand;
   // Буфер данных
   std::vector<char> buffer;
   // указатель на элемент списка
@@ -257,7 +257,7 @@ bool CListSerializer::deserializeFromBinary(const std::string &binaryFileName)
       counter_ptr[i - 1].first->next = counter_ptr[i].first;
     }
 
-    if (rand > counter_ptr.size())
+    if (rand > (int)counter_ptr.size())
     {
       vec_pair.emplace_back(counter_ptr[i].first, rand);
     }
