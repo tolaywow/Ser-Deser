@@ -71,6 +71,8 @@ bool CListSerializer::deserializeFromText(const std::string &TextFileName)
     return false;
   }
 
+  clear();
+
   while (std::getline(INPUT, data_plus_rand))
   {
     if (data_plus_rand.empty())
@@ -165,6 +167,8 @@ bool CListSerializer::serializeToBinary(const std::string &binaryFileName)
 
   // Файл для записи данных
   std::ofstream OUTPUT;
+  // Временная переменная для записи индекса случайного элемента
+  int num;
 
   OUTPUT.open(binaryFileName, std::ios::binary);
 
@@ -174,5 +178,114 @@ bool CListSerializer::serializeToBinary(const std::string &binaryFileName)
     return false;
   }
 
+  OUTPUT.clear();
+
+  for (size_t i = 0; i < counter_ptr.size(); i++)
+  {
+    num = -1;
+
+    for (size_t j = 0; j < counter_ptr.size(); j++)
+    {
+      if (counter_ptr[j].first == counter_ptr[i].first->rand)
+      {
+        num = j;
+      }
+    }
+
+    // Записываем длину строки
+    OUTPUT.write(reinterpret_cast<const char *>(counter_ptr[i].first->data.size()), sizeof(counter_ptr[i].first->data.size()));
+
+    // Записываем индекс rand
+    OUTPUT.write(reinterpret_cast<const char *>(num), sizeof(num));
+
+    // Записываем данные строки
+    OUTPUT.write(counter_ptr[i].first->data.c_str(), counter_ptr[i].first->data.size());
+  }
+
+  OUTPUT.close();
+
+  clear();
+
+  return true;
+}
+
+bool CListSerializer::deserializeFromBinary(const std::string &binaryFileName)
+{
+  if (binaryFileName.size() == 0)
+  {
+    return false;
+  }
+
+  // Файл для записи данных
+  std::ifstream INPUT;
+  // Размер пакета данных
+  size_t sizeofdata;
+  // Номер случайного элемента(индекс)
+  int rand;
+  // Буфер данных
+  std::vector<char> buffer;
+  // указатель на элемент списка
+  ListNode *LN;
+
+  INPUT.open(binaryFileName, std::ios::binary);
+
+  if (!INPUT.is_open())
+  {
+    std::cerr << "Не удалось открыть файл: " + binaryFileName;
+    return false;
+  }
+
+  clear();
+
+  while (!INPUT.eof())
+  {
+    INPUT >> sizeofdata;
+    INPUT >> rand;
+    buffer.resize(sizeofdata);
+
+    INPUT.read(buffer.data(), sizeofdata);
+
+    LN = new ListNode();
+    int i = counter_ptr.size();
+
+    counter_ptr.push_back({LN, 0});
+    counter_ptr[i].first->data = std::string(buffer.data(), sizeofdata);
+
+    if (i > 1)
+    {
+      counter_ptr[i].first->prev = counter_ptr[i - 1].first;
+      counter_ptr[i - 1].first->next = counter_ptr[i].first;
+    }
+
+    if (rand > counter_ptr.size())
+    {
+      vec_pair.emplace_back(counter_ptr[i], rand);
+    }
+    else
+    {
+      if (rand >= 0)
+      {
+        counter_ptr[i].first->rand = counter_ptr[rand].first;
+      }
+      else
+      {
+        counter_ptr[i].first->rand = nullptr;
+      }
+    }
+  }
+
+  for (size_t i = 0; i < vec_pair.size(); i++)
+  {
+    if (vec_pair[i].second <= counter_ptr.size())
+    {
+      vec_pair[i].first->rand = counter_ptr[vec_pair[i].second].first;
+    }
+    else
+    {
+      std::cerr << "Неверный индекс" << std::endl;
+      return false;
+    }
+  }
+  
   return true;
 }

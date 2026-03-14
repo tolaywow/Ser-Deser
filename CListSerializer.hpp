@@ -10,6 +10,13 @@ private:
   bool writeData();
 
   ListNode *head;
+  
+  /**
+   * @brief Очистка двусвязного списка
+   *
+   */
+  void clear() noexcept;
+  
   /**
    * @brief Метод подсчета количества символов UTF-8 в строке
    *
@@ -55,9 +62,4 @@ public:
    */
   bool deserializeFromBinary(const std::string &binaryFileName);
 
-  /**
-   * @brief Очистка двусвязного списка
-   *
-   */
-  void clear() noexcept;
 };
