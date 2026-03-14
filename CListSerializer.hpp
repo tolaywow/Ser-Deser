@@ -1,3 +1,4 @@
+#pragma once
 #include "ListNode.hpp"
 #include <string>
 #include <vector>
@@ -16,7 +17,7 @@ private:
    *
    */
   void clear() noexcept;
-  
+
   /**
    * @brief Метод подсчета количества символов UTF-8 в строке
    *

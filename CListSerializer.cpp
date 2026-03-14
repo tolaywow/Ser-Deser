@@ -5,7 +5,7 @@
 struct ListSerializer
 {
   std::string data;
-  int num;
+  size_t num;
 };
 
 void CListSerializer::clear() noexcept
@@ -59,7 +59,7 @@ bool CListSerializer::deserializeFromText(const std::string &TextFileName)
   // Строка с данными
   std::string data;
   // Номер случайного элемента
-  int rand;
+  size_t rand;
   // Указатель на новый элемент списка
   ListNode *var;
 
@@ -92,11 +92,11 @@ bool CListSerializer::deserializeFromText(const std::string &TextFileName)
         return false;
       }
 
-      int rand = std::stoi(data_plus_rand.substr(pos + 1));
+      rand = std::stoi(data_plus_rand.substr(pos + 1));
 
       var = new ListNode();
 
-      int i = counter_ptr.size();
+      size_t i = counter_ptr.size();
 
       counter_ptr.push_back({var, 0});
       counter_ptr[i].first->data = data;
@@ -109,7 +109,7 @@ bool CListSerializer::deserializeFromText(const std::string &TextFileName)
 
       if (rand > counter_ptr.size())
       {
-        vec_pair.emplace_back(counter_ptr[i], rand);
+        vec_pair.emplace_back(counter_ptr[i].first, rand);
       }
       else
       {
@@ -168,7 +168,7 @@ bool CListSerializer::serializeToBinary(const std::string &binaryFileName)
   // Файл для записи данных
   std::ofstream OUTPUT;
   // Временная переменная для записи индекса случайного элемента
-  int num;
+  size_t num;
 
   OUTPUT.open(binaryFileName, std::ios::binary);
 
@@ -221,7 +221,7 @@ bool CListSerializer::deserializeFromBinary(const std::string &binaryFileName)
   // Размер пакета данных
   size_t sizeofdata;
   // Номер случайного элемента(индекс)
-  int rand;
+  size_t rand;
   // Буфер данных
   std::vector<char> buffer;
   // указатель на элемент списка
@@ -246,7 +246,7 @@ bool CListSerializer::deserializeFromBinary(const std::string &binaryFileName)
     INPUT.read(buffer.data(), sizeofdata);
 
     LN = new ListNode();
-    int i = counter_ptr.size();
+    size_t i = counter_ptr.size();
 
     counter_ptr.push_back({LN, 0});
     counter_ptr[i].first->data = std::string(buffer.data(), sizeofdata);
@@ -259,7 +259,7 @@ bool CListSerializer::deserializeFromBinary(const std::string &binaryFileName)
 
     if (rand > counter_ptr.size())
     {
-      vec_pair.emplace_back(counter_ptr[i], rand);
+      vec_pair.emplace_back(counter_ptr[i].first, rand);
     }
     else
     {
