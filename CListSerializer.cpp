@@ -101,7 +101,7 @@ bool CListSerializer::deserializeFromText(const std::string &TextFileName)
       counter_ptr.push_back({var, 0});
       counter_ptr[i].first->data = data;
 
-      if (i > 1)
+      if (i > 0)
       {
         counter_ptr[i].first->prev = counter_ptr[i - 1].first;
         counter_ptr[i - 1].first->next = counter_ptr[i].first;
@@ -251,7 +251,7 @@ bool CListSerializer::deserializeFromBinary(const std::string &binaryFileName)
     counter_ptr.push_back({LN, 0});
     counter_ptr[i].first->data = std::string(buffer.data(), sizeofdata);
 
-    if (i > 1)
+    if (i > 0)
     {
       counter_ptr[i].first->prev = counter_ptr[i - 1].first;
       counter_ptr[i - 1].first->next = counter_ptr[i].first;
